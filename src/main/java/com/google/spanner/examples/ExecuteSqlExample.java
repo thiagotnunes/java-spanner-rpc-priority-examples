@@ -18,6 +18,8 @@ package com.google.spanner.examples;
 
 import com.google.cloud.spanner.DatabaseClient;
 import com.google.cloud.spanner.DatabaseId;
+import com.google.cloud.spanner.Options;
+import com.google.cloud.spanner.Options.RpcPriority;
 import com.google.cloud.spanner.ResultSet;
 import com.google.cloud.spanner.Spanner;
 import com.google.cloud.spanner.SpannerOptions;
@@ -34,12 +36,13 @@ public class ExecuteSqlExample {
     try (ResultSet resultSet = databaseClient
         .singleUse()
         .executeQuery(Statement
-            .newBuilder("SELECT * FROM Singers WHERE SingerId BETWEEN @from AND @to")
-            .bind("from")
-            .to(1L)
-            .bind("to")
-            .to(10L)
-            .build())
+                .newBuilder("SELECT * FROM Singers WHERE SingerId BETWEEN @from AND @to")
+                .bind("from")
+                .to(1L)
+                .bind("to")
+                .to(10L)
+                .build(),
+            Options.priority(RpcPriority.LOW))
     ) {
       while (resultSet.next()) {
         final long singerId = resultSet.getLong("SingerId");
